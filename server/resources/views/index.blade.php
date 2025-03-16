@@ -257,11 +257,10 @@ $description = 'A tablet-oriented service for weather and transport monitoring';
             if (!searchParams.has('lik')) return;
 
             // Process weather
-            // reloadWeather();
+            reloadWeather();
 
             // Process transport
-            // reloadTransport();
-            redrawTransportInfo();
+            reloadTransport();
             setInterval(redrawTransportInfo, 30 * 1000);
 
             $('#transport .btn').click(function() {
