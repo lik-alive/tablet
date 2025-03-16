@@ -46,7 +46,7 @@ $description = 'A tablet-oriented service for weather and transport monitoring';
                         <div class='row'>
                             <div class='col-12' name='50'>
                                 <label>50:</label>
-                                <span class='times'></span>
+                                <span class='arrives'></span>
                             </div>
                         </div>
                     </div>
@@ -58,11 +58,11 @@ $description = 'A tablet-oriented service for weather and transport monitoring';
                         <div class='row'>
                             <div class='col-12' name='1'>
                                 <label>1:</label>
-                                <span class='times'></span>
+                                <span class='arrives'></span>
                             </div>
                             <div class='col-12' name='84'>
                                 <label>84:</label>
-                                <span class='times'></span>
+                                <span class='arrives'></span>
                             </div>
                         </div>
                     </div>
@@ -74,7 +74,7 @@ $description = 'A tablet-oriented service for weather and transport monitoring';
                         <div class='row'>
                             <div class='col-12' name='50'>
                                 <label>50:</label>
-                                <span class='times'></span>
+                                <span class='arrives'></span>
                             </div>
                         </div>
                     </div>
@@ -86,19 +86,19 @@ $description = 'A tablet-oriented service for weather and transport monitoring';
                         <div class='row'>
                             <div class='col-12' name='1'>
                                 <label>1:</label>
-                                <span class='times'></span>
+                                <span class='arrives'></span>
                             </div>
                             <div class='col-12' name='47'>
                                 <label>47:</label>
-                                <span class='times'></span>
+                                <span class='arrives'></span>
                             </div>
                             <div class='col-12' name='47'>
                                 <label>67:</label>
-                                <span class='times'></span>
+                                <span class='arrives'></span>
                             </div>
                             <div class='col-12' name='84'>
                                 <label>84:</label>
-                                <span class='times'></span>
+                                <span class='arrives'></span>
                             </div>
                         </div>
                     </div>
@@ -119,10 +119,31 @@ $description = 'A tablet-oriented service for weather and transport monitoring';
     <script src="plugins/jquery-3.7.1.min.js"></script>
 
     <script>
+        let weatherInfoInterval = null;
+        let transportInfoInterval = null;
+        const stopInfo = {
+            'op_u': {
+                updatedAt: 0,
+                routes: {}
+            },
+            'su_u': {
+                updatedAt: 0,
+                routes: {}
+            },
+            'op_v': {
+                updatedAt: 0,
+                routes: {}
+            },
+            'su_v': {
+                updatedAt: 0,
+                routes: {}
+            },
+        }
+
         /**
          * Update weather data
          */
-        function weatherUpdate() {
+        function weatherInfo() {
             $.get('weather', function(data) {
                 if (data === '') return;
                 $('#weather-container').html(data);
@@ -130,72 +151,126 @@ $description = 'A tablet-oriented service for weather and transport monitoring';
         }
 
         /**
-         * Update stop data
+         * Reload weather
          */
-        function updateStop(stop) {
+        function reloadWeather() {
+            if (weatherInfoInterval) clearInterval(weatherInfoInterval);
+            // Immediate load
+            weatherInfo();
+            // Regular update
+            weatherInfoInterval = setInterval(weatherInfo, 15 * 60 * 1000);
+        }
+
+        /**
+         * Redraw transport info (with time offset)
+         */
+        function redrawTransportInfo() {
+            const nowTime = (new Date()).getTime();
+            for (const stop in stopInfo) {
+                for (const route in stopInfo[stop].routes) {
+                    const routeHtml = $(`#transport-container #${stop} div[name=${route}]`);
+                    if (!route.length) continue;
+
+                    const updatedAt = stopInfo[stop].updatedAt;
+                    const offset = (nowTime - updatedAt) / 1000 / 60;
+
+                    let ready = false;
+
+                    const arrives = stopInfo[stop].routes[route];
+                    const arrivesHtml = arrives.sort((a, b) => a - b).map(a => a - offset).filter(a => a > 0).map(a => {
+                        const min = Math.floor(a);
+                        if (a > 20 || a < 10) a = `<span class='bad'>${min} мин.</span>`;
+                        else {
+                            a = `<span class='good'>${min} мин.</span>`;
+
+                            if ($('#towork').hasClass('active') && (stop === 'op_v' || (stop === 'su_v' && ['47'].includes(route)))) ready = true;
+                            if ($('#tohome').hasClass('active') && (stop === 'op_u' || (stop === 'su_u' && ['1', '84'].includes(route)))) ready = true;
+                        }
+                        return a;
+                    }).join(", ");
+
+                    routeHtml.find('.arrives').html(arrivesHtml);
+
+                    // Play ready sound
+                    if (ready) {
+                        gtg();
+                        $('#transport .btn').removeClass('active');
+                    }
+                }
+            }
+        }
+
+        /**
+         * Load stop info
+         */
+        function loadStopInfo(stop) {
             return $.get('transport', {
                 stop
             }, function(data) {
                 if (data === '') return;
                 const jdata = JSON.parse(data);
-                for (const key in jdata) {
-                    const route = $(`#transport-container #${stop} div[name=${key}]`);
-                    if (!route.length) continue;
-
-                    const values = jdata[key].sort();
-                    let ready = false;
-                    const times = values.sort((a, b) => a - b).map(x => {
-                        const min = Math.floor(x);
-                        if (x > 20 || x < 10) x = `<span class='bad'>${min} мин.</span>`;
-                        else {
-                            x = `<span class='good'>${min} мин.</span>`;
-
-                            if ($('#towork').hasClass('active') && (stop === 'op_v' || stop === 'su_v')) ready = true;
-                            if ($('#tohome').hasClass('active') && (stop === 'op_u' || (stop === 'su_u' && key === '1'))) ready = true;
-                        }
-                        return x;
-                    }).join(", ");
-
-                    // Play ready sound
-                    if (ready) {
-                        gtg();
-                        $('#towork').removeClass('active');
-                        $('#tohome').removeClass('active');
-                    }
-                    route.find('.times').html(times);
+                const nowTime = (new Date()).getTime();
+                for (const route in jdata) {
+                    stopInfo[stop].updatedAt = nowTime;
+                    stopInfo[stop].routes[route] = jdata[route];
                 }
             }).promise();
         }
 
-        let lastUpdateAt = null;
-
         /**
          * Update transport data
          */
-        async function transportUpdate() {
-            if ($('#towork').hasClass('active')) {
-                await updateStop('op_v');
-                await updateStop('su_v');
-            } else if ($('#tohome').hasClass('active')) {
-                await updateStop('op_u');
-                await updateStop('su_u');
-            } else {
-                const now = new Date();
+        async function transportInfo() {
+            // Skip updating by nights
+            if ((new Date()).getHours() < 5) return;
 
-                // Skip updating by nights
-                if (now.getHours() < 5) return;
+            let urgentUpdate = [];
+            if ($('#towork').hasClass('active')) urgentUpdate = ['op_v', 'su_v'];
+            else if ($('#tohome').hasClass('active')) urgentUpdate = ['op_u', 'su_u'];
 
-                const nowTime = now.getTime();
-                console.log(nowTime - lastUpdateAt);
-                if (!lastUpdateAt || nowTime - lastUpdateAt > 9 * 60 * 1000) {
-                    lastUpdateAt = nowTime;
-                    await updateStop('op_v');
-                    await updateStop('su_v');
-                    await updateStop('op_u');
-                    await updateStop('su_u');
+            for (const key in stopInfo) {
+                const nowTime = (new Date()).getTime();
+                if (urgentUpdate.includes(key) || (nowTime - stopInfo[key].updatedAt > 10 * 60 * 1000)) {
+                    await loadStopInfo(key);
+                    redrawTransportInfo();
                 }
             }
         }
+
+        /**
+         * Reload transport
+         */
+        function reloadTransport() {
+            if (transportInfoInterval) clearInterval(transportInfoInterval);
+            // Immediate load
+            transportInfo();
+            // Regular update
+            transportInfoInterval = setInterval(transportInfo, 2 * 60 * 1000);
+        }
+
+        /**
+         * Init after jquery is ready
+         */
+        $(document).ready(function() {
+            // Small protection from overcrawling
+            const searchParams = new URLSearchParams(window.location.search);
+            if (!searchParams.has('lik')) return;
+
+            // Process weather
+            // reloadWeather();
+
+            // Process transport
+            // reloadTransport();
+            redrawTransportInfo();
+            setInterval(redrawTransportInfo, 30 * 1000);
+
+            $('#transport .btn').click(function() {
+                if (this.id === 'tohome') $('towork').removeClass('active');
+                else $('tohome').removeClass('active');
+                $(this).toggleClass('active');
+                reloadTransport();
+            });
+        });
 
         /**
          * Play ready sound
@@ -204,29 +279,6 @@ $description = 'A tablet-oriented service for weather and transport monitoring';
             const audio = new Audio('gtg.mp3');
             audio.play();
         }
-
-        /**
-         * Init after jquery is ready
-         */
-        $(document).ready(function() {
-            // Process weather
-            weatherUpdate();
-            setInterval(weatherUpdate, 15 * 60 * 1000);
-
-            // Process transport
-            transportUpdate();
-            setInterval(transportUpdate, 2 * 60 * 1000);
-
-            $('#tohome').click(function() {
-                $('#towork').removeClass('active');
-                $(this).toggleClass('active');
-            });
-
-            $('#towork').click(function() {
-                $('#tohome').removeClass('active');
-                $(this).toggleClass('active');
-            });
-        });
     </script>
 </body>
 
