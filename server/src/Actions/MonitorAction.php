@@ -24,6 +24,9 @@ class MonitorAction
     {
         $content = file_get_contents('https://yandex.ru/pogoda/samara?lat=53.195876&lon=50.100199');
 
+        // Remove YAMetrika and other stuff
+        $content = mb_ereg_replace('<link rel="alternate".*?>', '', $content);
+
         // Request OK
         if (is_string($content))
             $response->getBody()->write($content);
@@ -40,17 +43,25 @@ class MonitorAction
     public function transport(Request $request, Response $response)
     {
         $stop = $request->getQueryParams()['stop'];
+        $isUrgent = $request->getQueryParams()['isUrgent'];
 
-        $ch = curl_init("ytapi:3001/$stop");
-        $content = curl_exec($ch);
+        // Check stop
+        $list = ['op_u', 'su_u', 'op_v', 'su_v'];
+        if (!in_array($stop, $list, true)) return $response;
 
-        // Request OK
-        if (is_string($content))
-            $response->getBody()->write($content);
-        // Request failed
-        else
-            $response->getBody()->write("");
+        $folder = "../storage/stops";
 
+        // Set urgent flag for update
+        if ($isUrgent)
+            file_put_contents("$folder/$stop.fl", '');
+
+        // Read info
+        $info = "$folder/$stop.json";
+        $content = "";
+        if (file_exists($info))
+            $content = file_get_contents($info);
+
+        $response->getBody()->write($content);
         return $response;
     }
 }

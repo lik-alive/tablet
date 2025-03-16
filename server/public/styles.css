@@ -67,10 +67,14 @@ body {
   border-color: #0dcaf0;
 }
 
-#transport .bad {
+#transport .late {
   color: #ff5f5f;
 }
 
 #transport .good {
   color: #78ff6f;
+}
+
+#transport .future {
+  color: #625fff;
 }

@@ -25,7 +25,8 @@ services:
         restart: always
         volumes:
             - ./ytapi:/ytapi
-        command: gunicorn main:app -b 0.0.0.0:3001 --timeout 60
+            - ./server/storage/stops:/stops
+        command: python3 ./main.py
         depends_on:
             - ytproxy
 

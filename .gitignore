@@ -2,7 +2,10 @@
 .vscode/
 !server/storage/cache/
 server/storage/cache/*
+!server/storage/stops/
+server/storage/stops/*
 server/vendor/
 .env.dev
 .env.prod
 */__pycache__
+*.log

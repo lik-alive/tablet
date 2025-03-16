@@ -119,8 +119,6 @@ $description = 'A tablet-oriented service for weather and transport monitoring';
     <script src="plugins/jquery-3.7.1.min.js"></script>
 
     <script>
-        let weatherInfoInterval = null;
-        let transportInfoInterval = null;
         const stopInfo = {
             'op_u': {
                 updatedAt: 0,
@@ -151,17 +149,6 @@ $description = 'A tablet-oriented service for weather and transport monitoring';
         }
 
         /**
-         * Reload weather
-         */
-        function reloadWeather() {
-            if (weatherInfoInterval) clearInterval(weatherInfoInterval);
-            // Immediate load
-            weatherInfo();
-            // Regular update
-            weatherInfoInterval = setInterval(weatherInfo, 15 * 60 * 1000);
-        }
-
-        /**
          * Redraw transport info (with time offset)
          */
         function redrawTransportInfo() {
@@ -179,7 +166,8 @@ $description = 'A tablet-oriented service for weather and transport monitoring';
                     const arrives = stopInfo[stop].routes[route];
                     const arrivesHtml = arrives.sort((a, b) => a - b).map(a => a - offset).filter(a => a > 0).map(a => {
                         const min = Math.floor(a);
-                        if (a > 20 || a < 10) a = `<span class='bad'>${min} мин.</span>`;
+                        if (a < 12) a = `<span class='late'>${min} мин.</span>`;
+                        else if (a > 22) a = `<span class='future'>${min} мин.</span>`;
                         else {
                             a = `<span class='good'>${min} мин.</span>`;
 
@@ -203,17 +191,13 @@ $description = 'A tablet-oriented service for weather and transport monitoring';
         /**
          * Load stop info
          */
-        function loadStopInfo(stop) {
+        function loadStopInfo(stop, isUrgent = false) {
             return $.get('transport', {
-                stop
+                stop,
+                isUrgent: isUrgent ? 1 : 0
             }, function(data) {
                 if (data === '') return;
-                const jdata = JSON.parse(data);
-                const nowTime = (new Date()).getTime();
-                for (const route in jdata) {
-                    stopInfo[stop].updatedAt = nowTime;
-                    stopInfo[stop].routes[route] = jdata[route];
-                }
+                stopInfo[stop] = JSON.parse(data);
             }).promise();
         }
 
@@ -221,53 +205,40 @@ $description = 'A tablet-oriented service for weather and transport monitoring';
          * Update transport data
          */
         async function transportInfo() {
-            // Skip updating by nights
-            if ((new Date()).getHours() < 5) return;
-
             let urgentUpdate = [];
             if ($('#towork').hasClass('active')) urgentUpdate = ['op_v', 'su_v'];
             else if ($('#tohome').hasClass('active')) urgentUpdate = ['op_u', 'su_u'];
 
+            // Update each stop
             for (const key in stopInfo) {
-                const nowTime = (new Date()).getTime();
-                if (urgentUpdate.includes(key) || (nowTime - stopInfo[key].updatedAt > 10 * 60 * 1000)) {
-                    await loadStopInfo(key);
-                    redrawTransportInfo();
-                }
+                const isUrgent = urgentUpdate.includes(key);
+                await loadStopInfo(key, isUrgent);
             }
-        }
 
-        /**
-         * Reload transport
-         */
-        function reloadTransport() {
-            if (transportInfoInterval) clearInterval(transportInfoInterval);
-            // Immediate load
-            transportInfo();
-            // Regular update
-            transportInfoInterval = setInterval(transportInfo, 2 * 60 * 1000);
+            // Redraw info
+            redrawTransportInfo();
         }
 
         /**
          * Init after jquery is ready
          */
         $(document).ready(function() {
-            // Small protection from overcrawling
-            const searchParams = new URLSearchParams(window.location.search);
-            if (!searchParams.has('lik')) return;
-
             // Process weather
-            reloadWeather();
+            weatherInfo();
+            setInterval(weatherInfo, 15 * 60 * 1000);
 
             // Process transport
-            reloadTransport();
+            transportInfo();
+            setInterval(transportInfo, 2 * 60 * 1000);
             setInterval(redrawTransportInfo, 30 * 1000);
 
             $('#transport .btn').click(function() {
                 if (this.id === 'tohome') $('towork').removeClass('active');
                 else $('tohome').removeClass('active');
                 $(this).toggleClass('active');
-                reloadTransport();
+
+                // Load info
+                if ($(this).hasClass('active')) transportInfo();
             });
         });
 
