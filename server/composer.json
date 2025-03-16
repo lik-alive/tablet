@@ -1,0 +1,26 @@
+{
+  "name": "lik-alive/tablet",
+  "description": "A tablet-oriented service for weather and transport monitoring",
+  "license": "MIT",
+  "require": {
+    "php": "^7.4 || ^8.0",
+    "ext-json": "*",
+    "jenssegers/blade": "^1.4",
+    "php-di/php-di": "^6.4",
+    "slim/psr7": "^1.5",
+    "slim/slim": "^4.10",
+    "vlucas/phpdotenv": "^5.6"
+  },
+  "config": {
+    "process-timeout": 0,
+    "sort-packages": true
+  },
+  "autoload": {
+    "files": [
+      "./src/helpers.php"
+    ],
+    "psr-4": {
+      "App\\": "src/"
+    }
+  }
+}

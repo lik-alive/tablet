@@ -1,0 +1,26 @@
+FROM php:7.4-fpm
+
+WORKDIR /var/www
+
+# Add utils
+RUN apt update && apt install -y nano bash curl
+
+# Install composer
+RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" 
+RUN php -r "if (hash_file('sha384', 'composer-setup.php') === 'dac665fdc30fdd8ec78b38b9800061b4150413ff2e3b6f88543c636f7cd84f6db9189d43a81e5503cda447da73c7e5b6') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;" 
+RUN php composer-setup.php 
+RUN php -r "unlink('composer-setup.php');" 
+RUN mv composer.phar /usr/local/bin/composer
+
+# Add zip for composer
+RUN apt install -y zip unzip
+
+# xdebug
+RUN pecl install xdebug-3.1.6 \
+    && docker-php-ext-enable xdebug    
+RUN  echo "xdebug.mode=debug" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
+    && echo "xdebug.start_with_request=yes" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
+    && echo "xdebug.discover_client_host=1" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+# && echo "xdebug.client_host=172.23.0.1" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+
+CMD composer install && php -S 0.0.0.0:3000 -t public

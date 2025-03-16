@@ -1,0 +1,8 @@
+.idea/
+.vscode/
+!server/storage/cache/
+server/storage/cache/*
+server/vendor/
+.env.dev
+.env.prod
+*/__pycache__

@@ -1,0 +1,41 @@
+services:
+    server:
+        user: '$DUID:$DGID'
+        build:
+            context: ./server
+            dockerfile: Dockerfile.prod
+        image: prod_tablet_server
+        container_name: prod_tablet_server
+        restart: always
+        env_file: server/.env.prod
+        volumes:
+            - ./server:/var/www
+        ports:
+            - "9090:3000"
+        depends_on:
+            - ytapi
+
+    ytapi:
+        user: '$DUID:$DGID'
+        build:
+            context: ./ytapi
+            dockerfile: Dockerfile
+        image: prod_tablet_ytapi
+        container_name: prod_tablet_ytapi
+        restart: always
+        volumes:
+            - ./ytapi:/ytapi
+        command: gunicorn main:app -b 0.0.0.0:3001 --timeout 60
+        depends_on:
+            - ytproxy
+
+    ytproxy:
+        build:
+            context: ./ytproxy
+            dockerfile: Dockerfile
+        image: prod_tablet_ytproxy
+        container_name: prod_tablet_ytproxy
+        restart: always
+        command: ./transport_proxy.py --port 3002 --delay 10 --verbose 1
+        logging:
+            driver: none
