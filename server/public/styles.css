@@ -5,9 +5,9 @@ body {
 
 .footer {
   border: none !important;
-  color: #717171;
+  color: #585858;
   position: fixed;
-  bottom: -10px;
+  bottom: -12px;
   right: -15px;
   padding: 0;
 }
