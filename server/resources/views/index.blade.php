@@ -41,7 +41,7 @@ $description = 'A tablet-oriented service for weather and transport monitoring';
             <div id='transport-container'>
                 <section id='op_u'>
                     <div>Овраг подпольщиков</div>
-                    <div class='small opacity-75'>В сторону Управленческого</div>
+                    <div class='opacity-75'>В сторону Управленческого</div>
                     <div class='routes'>
                         <div class='row'>
                             <div class='col-12' name='50'>
@@ -53,7 +53,7 @@ $description = 'A tablet-oriented service for weather and transport monitoring';
                 </section>
                 <section id='su_u'>
                     <div>Аэрокосмический университет</div>
-                    <div class='small opacity-75'>В сторону Управленческого</div>
+                    <div class='opacity-75'>В сторону Управленческого</div>
                     <div class='routes'>
                         <div class='row'>
                             <div class='col-12' name='1'>
@@ -69,7 +69,7 @@ $description = 'A tablet-oriented service for weather and transport monitoring';
                 </section>
                 <section id='op_v'>
                     <div>Овраг подпольщиков</div>
-                    <div class='small opacity-75'>В сторону Ж/д вокзала</div>
+                    <div class='opacity-75'>В сторону Ж/д вокзала</div>
                     <div class='routes'>
                         <div class='row'>
                             <div class='col-12' name='50'>
@@ -81,7 +81,7 @@ $description = 'A tablet-oriented service for weather and transport monitoring';
                 </section>
                 <section id='su_v'>
                     <div>Аэрокосмический университет</div>
-                    <div class='small opacity-75'>В сторону Ж/д вокзала</div>
+                    <div class='opacity-75'>В сторону Ж/д вокзала</div>
                     <div class='routes'>
                         <div class='row'>
                             <div class='col-12' name='1'>
@@ -103,8 +103,10 @@ $description = 'A tablet-oriented service for weather and transport monitoring';
                         </div>
                     </div>
                 </section>
-                <button id='towork' class='btn btn-outline-info btn-lg shadow-none me-5' tabindex='-1'>Едем на работу</button>
-                <button id='tohome' class='btn btn-outline-info btn-lg shadow-none'>Едем домой</button>
+                <div class="d-flex justify-content-between mt-3">
+                    <button id='tohome' class='btn btn-outline-info btn-lg shadow-none'>Едем домой</button>
+                    <button id='towork' class='btn btn-outline-info btn-lg shadow-none' tabindex='-1'>Едем на работу</button>
+                </div>
             </div>
         </div>
     </main>
