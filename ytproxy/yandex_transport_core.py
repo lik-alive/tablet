@@ -143,7 +143,7 @@ class YandexTransportCore:
         time.sleep(45)
 
         network_data = self.get_chromium_networking_data()
-        print(network_data)
+        # print(network_data)
 
         # Loading Network Data to JSON
         #try:

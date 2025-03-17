@@ -76,6 +76,8 @@ def monitor():
             
         # Update info
         for stop in updateList:
+            infoFile = f'/stops/{stop}.json'
+            
             # Get info from Yandex Transport
             info = getInfo(stops[stop])
             
