@@ -83,6 +83,8 @@ body {
 }
 
 #transport button {
+  padding: 5px 20px;
+  width: 170px;
   color: #98eeff;
   border-color: #98eeff;
 }
@@ -108,5 +110,9 @@ body {
 }
 
 #transport .future {
-  color: #625fff;
+  color: #fff382;
+}
+
+#transport button span {
+  vertical-align: text-bottom;
 }

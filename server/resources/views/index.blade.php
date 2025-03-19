@@ -39,34 +39,6 @@ $description = 'A tablet-oriented service for weather and transport monitoring';
         <!-- Transport -->
         <div id='transport'>
             <div id='transport-container'>
-                <section id='op_u'>
-                    <div>Овраг подпольщиков</div>
-                    <div class='opacity-75'>В сторону Управленческого</div>
-                    <div class='routes'>
-                        <div class='row'>
-                            <div class='col-12' name='50'>
-                                <label>50:</label>
-                                <span class='arrives'></span>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-                <section id='su_u'>
-                    <div>Аэрокосмический университет</div>
-                    <div class='opacity-75'>В сторону Управленческого</div>
-                    <div class='routes'>
-                        <div class='row'>
-                            <div class='col-12' name='1'>
-                                <label>1:</label>
-                                <span class='arrives'></span>
-                            </div>
-                            <div class='col-12' name='84'>
-                                <label>84:</label>
-                                <span class='arrives'></span>
-                            </div>
-                        </div>
-                    </div>
-                </section>
                 <section id='op_v'>
                     <div>Овраг подпольщиков</div>
                     <div class='opacity-75'>В сторону Ж/д вокзала</div>
@@ -103,9 +75,37 @@ $description = 'A tablet-oriented service for weather and transport monitoring';
                         </div>
                     </div>
                 </section>
+                <section id='op_u'>
+                    <div>Овраг подпольщиков</div>
+                    <div class='opacity-75'>В сторону Управленческого</div>
+                    <div class='routes'>
+                        <div class='row'>
+                            <div class='col-12' name='50'>
+                                <label>50:</label>
+                                <span class='arrives'></span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <section id='su_u'>
+                    <div>Аэрокосмический университет</div>
+                    <div class='opacity-75'>В сторону Управленческого</div>
+                    <div class='routes'>
+                        <div class='row'>
+                            <div class='col-12' name='1'>
+                                <label>1:</label>
+                                <span class='arrives'></span>
+                            </div>
+                            <div class='col-12' name='84'>
+                                <label>84:</label>
+                                <span class='arrives'></span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
                 <div class="d-flex justify-content-between mt-3">
-                    <button id='tohome' class='btn btn-outline-info btn-lg shadow-none'>Едем домой</button>
-                    <button id='towork' class='btn btn-outline-info btn-lg shadow-none' tabindex='-1'>Едем на работу</button>
+                    <button id='towork' class='btn btn-outline-info btn-lg shadow-none' tabindex='-1'><span class="bi-arrow-left"></span> Работа</button>
+                    <button id='tohome' class='btn btn-outline-info btn-lg shadow-none'>Дом <span class="bi-arrow-right"></span></button>
                 </div>
             </div>
         </div>
