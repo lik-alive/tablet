@@ -158,7 +158,7 @@ $description = 'A tablet-oriented service for weather and transport monitoring';
             for (const stop in stopInfo) {
                 for (const route in stopInfo[stop].routes) {
                     const routeHtml = $(`#transport-container #${stop} div[name=${route}]`);
-                    if (!route.length) continue;
+                    if (!routeHtml.length) continue;
 
                     const updatedAt = stopInfo[stop].updatedAt;
                     const offset = (nowTime - updatedAt) / 1000 / 60;
