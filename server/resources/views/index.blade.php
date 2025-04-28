@@ -166,7 +166,7 @@ $description = 'A tablet-oriented service for weather and transport monitoring';
                     let ready = false;
 
                     const arrives = stopInfo[stop].routes[route];
-                    const arrivesHtml = arrives.sort((a, b) => a - b).map(a => a - offset).filter(a => a > 0).map(a => {
+                    const arrivesHtml = arrives.sort((a, b) => a - b).map(a => a - offset).filter(a => a >= 0).slice(0, 5).map(a => {
                         const min = Math.floor(a);
                         if (a < 12) a = `<span class='late'>${min} мин.</span>`;
                         else if (a > 22) a = `<span class='future'>${min} мин.</span>`;
@@ -233,6 +233,14 @@ $description = 'A tablet-oriented service for weather and transport monitoring';
             transportInfo();
             setInterval(transportInfo, 2 * 60 * 1000);
             setInterval(redrawTransportInfo, 30 * 1000);
+
+            // Reload page to prevent swap error
+            const nextReload = new Date();
+            nextReload.setDate(nextReload.getDate() + 1);
+            nextReload.setHours(1, 0, 0);
+            setTimeout(() => {
+                window.location.reload();
+            }, nextReload - new Date());
 
             $('#transport .btn').click(function() {
                 if (this.id === 'tohome') $('towork').removeClass('active');
