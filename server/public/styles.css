@@ -1,15 +1,20 @@
 html,
 body {
-  background-color: #222;
+  background-color: #222 !important;
 }
 
 .footer {
   border: none !important;
   color: #585858;
   position: fixed;
-  bottom: -12px;
-  right: -15px;
+  bottom: 0px;
+  right: 0px;
   padding: 0;
+}
+
+#time {
+  font-size: 4rem;
+  margin-bottom: 30px;
 }
 
 #weather {
@@ -17,11 +22,11 @@ body {
 }
 
 #weather-container {
-  transform: scale(0.8);
   transform-origin: 0 0;
   overflow: hidden;
   width: 684px;
   height: 614px;
+  margin: 10px 10px 0 5px;
 }
 
 #weather header,
@@ -29,8 +34,59 @@ body {
 #weather .pro-entry-points,
 #weather .swiper-wrapper > li,
 #weather .promo,
-#weather footer {
+#weather footer,
+#weather .AppWidgetNowcast_container_logo__3siSt,
+#weather .AppLayoutTypeMain_left__fUvzq,
+#weather .AppFact_report__Ln_Zf,
+#weather .AppWellBeingCardsMain_main__nisN2,
+#weather .AppFact_feelsAndYesterday__pG4p_,
+#weather .AppTabs_tabList__OiXcp,
+#weather .AppWarningsItem_wrap__uq24Y,
+#weather .AppScroll_buttons__Wm0sX,
+#weather #short-forecast-title,
+#weather > #weather-container > img,
+#weather .AppTabs_container__RtFSF {
   display: none !important;
+}
+
+#weather .AppLayoutTypeMain_center__R9r7_ {
+  background: transparent;
+  border: 1px solid #888;
+  border-radius: 10px;
+}
+
+#weather .AppLayoutTypeMain_main__s_v86 > *:not(:nth-child(2)) {
+  display: none !important;
+}
+
+#weather .AppLayoutTypeMain_contentWrapper__mZQ3q {
+  padding: 0;
+  grid-template-areas: "main";
+  grid-template-columns: 100%;
+}
+
+#weather .AppLayoutTypeMain_main__s_v86 {
+  padding: 0;
+}
+
+#weather .AppFact_wrap_withReport__HYdAy {
+  grid-template-areas:
+    "a11y a11y a11y a11y a11y a11y a11y a11y"
+    "temperature condition alert alert alert alert alert alert"
+    "temperature complementary complementary complementary complementary complementary complementary complementary";
+}
+
+#weather .AppShortForecastContainer_container__enZTm {
+  margin-top: 0;
+  margin-bottom: 15px;
+}
+
+#weather .AppShortForecastScroll_scroll__6NZIO {
+  width: 100%;
+}
+
+#weather .AppFact_wrap__N4SYB {
+  color: var(--text-primary);
 }
 
 #weather .swiper-wrapper > li:nth-child(1),
@@ -53,6 +109,7 @@ body {
 #transport {
   width: 100%;
   color: #ddd;
+  font-size: 20px;
 }
 
 #transport-container {
@@ -61,7 +118,6 @@ body {
   border-radius: 10px;
   padding: 10px 20px;
   margin: 10px 20px 0px 5px;
-  height: 468px;
   background-position: right;
   background-image: url("transport-bg.jpg");
 }
@@ -74,19 +130,16 @@ body {
   font-weight: 500;
 }
 
-#transport section > div:nth-child(2) {
-  font-size: 10pt;
-}
-
 #transport .routes {
   margin-left: 15px;
 }
 
 #transport button {
   padding: 5px 20px;
-  width: 170px;
   color: #98eeff;
   border-color: #98eeff;
+  font-size: 2rem;
+  width: 200px;
 }
 
 #transport button:hover {

@@ -26,6 +26,9 @@ class MonitorAction
 
         // Remove YAMetrika and other stuff
         $content = mb_ereg_replace('<link rel="alternate".*?>', '', $content);
+        $content = mb_ereg_replace('<script>.*?</script>', '', $content);
+        $content = mb_ereg_replace('<script src=.*?</script>', '', $content);
+        $content = mb_ereg_replace('<script src=.*?</script>', '', $content);
 
         // Request OK
         if (is_string($content))

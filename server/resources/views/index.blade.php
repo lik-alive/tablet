@@ -33,15 +33,15 @@ $description = 'A tablet-oriented service for weather and transport monitoring';
     <main class='h-100 d-flex'>
         <!-- Weather -->
         <div id='weather'>
-            <div id='weather-container'></div>
+            <div id='weather-container' data-theme='dark'></div>
         </div>
 
         <!-- Transport -->
         <div id='transport'>
             <div id='transport-container'>
+                <h1 id='time' class="text-center"></h1>
                 <section id='op_v'>
-                    <div>Овраг подпольщиков</div>
-                    <div class='opacity-75'>В сторону Ж/д вокзала</div>
+                    <div>Овраг подпольщиков (<span class='opacity-75 small'>Ж/д вокзал</span>)</div>
                     <div class='routes'>
                         <div class='row'>
                             <div class='col-12' name='50'>
@@ -52,8 +52,7 @@ $description = 'A tablet-oriented service for weather and transport monitoring';
                     </div>
                 </section>
                 <section id='su_v'>
-                    <div>Аэрокосмический университет</div>
-                    <div class='opacity-75'>В сторону Ж/д вокзала</div>
+                    <div>Аэрокосмический университет (<span class='opacity-75 small'>Ж/д вокзал</span>)</div>
                     <div class='routes'>
                         <div class='row'>
                             <div class='col-12' name='1'>
@@ -76,8 +75,7 @@ $description = 'A tablet-oriented service for weather and transport monitoring';
                     </div>
                 </section>
                 <section id='op_u'>
-                    <div>Овраг подпольщиков</div>
-                    <div class='opacity-75'>В сторону Управленческого</div>
+                    <div>Овраг подпольщиков (<span class='opacity-75 small'>Управленческий</span>)</div>
                     <div class='routes'>
                         <div class='row'>
                             <div class='col-12' name='50'>
@@ -88,8 +86,7 @@ $description = 'A tablet-oriented service for weather and transport monitoring';
                     </div>
                 </section>
                 <section id='su_u'>
-                    <div>Аэрокосмический университет</div>
-                    <div class='opacity-75'>В сторону Управленческого</div>
+                    <div>Аэрокосмический университет (<span class='opacity-75 small'>Управленческий</span>)</div>
                     <div class='routes'>
                         <div class='row'>
                             <div class='col-12' name='1'>
@@ -233,6 +230,18 @@ $description = 'A tablet-oriented service for weather and transport monitoring';
             transportInfo();
             setInterval(transportInfo, 2 * 60 * 1000);
             setInterval(redrawTransportInfo, 30 * 1000);
+
+            // Process time
+            setInterval(function() {
+                const now = new Date();
+                let hours = (now.getUTCHours() + 4) % 24;
+                if (hours < 10) hours = '0' + hours;
+                let minutes = now.getMinutes();
+                if (minutes < 10) minutes = '0' + minutes;
+                let seconds = now.getSeconds();
+                if (seconds < 10) seconds = '0' + seconds;
+                $('#time').html(`${hours}:${minutes}:${seconds}`);
+            }, 1 * 1000);
 
             // Reload page to prevent swap error
             const nextReload = new Date();
